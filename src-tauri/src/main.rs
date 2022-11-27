@@ -1,20 +1,32 @@
 use std::{env, sync::Arc};
+use tauri::{AppHandle, Manager};
 
 mod database;
 mod error;
 mod prelude;
+
 use database::Connection;
 use prelude::*;
+
 
 #[cfg_attr(
     all(not(debug_assertions), target_os = "windows"),
     windows_subsystem = "windows"
 )]
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn greet(name: &str, app: AppHandle) -> core::result::Result<String,()> {
+    let conn = (*app.state::<Arc<Connection>>()).clone();
+    let response = conn.exec_create("hi", "lmao").await;
+
+    match response {
+        Ok(_) => Ok(format!("Hello, {}! You've been greeted from Rust!", name)),
+        Err(_) => {Err(())},
+    }
 }
+
+
+
 
 #[tokio::main]
 async fn main() -> Result<()> {
