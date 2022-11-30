@@ -6,8 +6,8 @@ use yew::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "tauri"])]
-    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "tauri"], catch)]
+    async fn invoke(cmd: &str, args: JsValue) -> Result<JsValue, JsValue>;
 
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
@@ -21,6 +21,7 @@ struct GreetArgs<'a> {
 #[function_component(App)]
 pub fn app() -> Html {
     let greet_input_ref = use_ref(|| NodeRef::default());
+    let task_input_ref = use_ref(|| NodeRef::default());
 
     let name = use_state(|| String::new());
 
@@ -36,9 +37,11 @@ pub fn app() -> Html {
                         return;
                     }
 
-                    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-                    let new_msg =
-                        invoke("greet", to_value(&GreetArgs { name: &*name }).unwrap()).await;
+                    let new_msg = match invoke("greet", to_value(&GreetArgs { name: &*name }).unwrap()).await {
+                        Ok(v) => v,
+                        Err(e) => e,
+                    };
+
                     log(&new_msg.as_string().unwrap());
                     greet_msg.set(new_msg.as_string().unwrap());
                 });
@@ -48,6 +51,7 @@ pub fn app() -> Html {
             name2,
         );
     }
+
 
     let greet = {
         let name = name.clone();
