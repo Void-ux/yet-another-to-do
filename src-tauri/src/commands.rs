@@ -15,8 +15,7 @@ pub async fn create_task(table: &str ,mut params: Object, app: AppHandle) -> Res
     let mut ctx = Ctx::from_app(app);
     params.insert("tb".into(), Value::from(Strand::from(table))).unwrap();
 
-    ctx.clear_vars()
-    .set_var(params)
+    ctx.set_var(params)
     .execute("create type::table($tb) content $data").await?;
     Ok(())
 }
