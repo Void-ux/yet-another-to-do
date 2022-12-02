@@ -1,8 +1,8 @@
 [package]
 name = "yet-another-to-do"
-version = "0.0.0"
+version = "0.1.0"
 description = "A Tauri App"
-authors = ["you"]
+authors = ["Dan <the.void.altacc@gmail.com", "Zeus"]
 license = ""
 repository = ""
 edition = "2021"
