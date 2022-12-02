@@ -21,7 +21,6 @@ struct GreetArgs<'a> {
 #[function_component(App)]
 pub fn app() -> Html {
     let greet_input_ref = use_ref(|| NodeRef::default());
-    let task_input_ref = use_ref(|| NodeRef::default());
 
     let name = use_state(|| String::new());
 
